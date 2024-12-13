@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: practicedeployment
+  namespace: nsproject
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      apptype: mahy
+      env: dev
+  template:
+    metadata:
+      labels:
+        apptype: mahy
+        env: dev
+    spec:
+      containers:
+        - image: mahyuthirakumar/listrace_1:latest
+          name: practicecontainer
+          imagePullPolicy: Always
+          ports:
+            - name: apache
+              containerPort: 80
+              protocol: TCP
+          resources:
+            requests:
+              memory: "300Mi"
+              cpu: "300m"
+            limits:
+              memory: "300Mi"
+              cpu: "300m"
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: websvc
+  namespace: nsproject
+spec:
+  type: NodePort
+  ports:
+    - name: apache
+      nodePort: 30002
+      port: 80
+      targetPort: 80
+      protocol: TCP
+  selector:
+    apptype: mahy
+    env: dev
